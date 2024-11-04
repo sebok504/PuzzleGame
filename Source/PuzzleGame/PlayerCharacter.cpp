@@ -7,6 +7,10 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "IdleCameraShake.h"
+#include "WalkingCameraShake.h"
+#include "RunningCameraShake.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -36,11 +40,12 @@ void APlayerCharacter::BeginPlay()
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 }
 
-// Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
+	UpdateMovementState();
+	UpdateCameraShake();
 }
 
 // Called to bind functionality to input
@@ -81,4 +86,43 @@ void APlayerCharacter::StopRunning(const FInputActionValue& InputValue)
 {
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 }
+
+void APlayerCharacter::UpdateMovementState()
+{
+	float Speed = GetVelocity().Length();
+
+	if (Speed <= 0)
+	{
+		CurrentMovementState = EPlayerMovementState::Idle;
+	}
+	else if (Speed > 0 && Speed < RunSpeed)
+	{
+		CurrentMovementState = EPlayerMovementState::Walking;
+	}
+	else
+	{
+		CurrentMovementState = EPlayerMovementState::Running;
+	}
+}
+
+void APlayerCharacter::UpdateCameraShake()
+{
+	switch (CurrentMovementState)
+	{
+	case EPlayerMovementState::Idle:
+			UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraShake(UIdleCameraShake::StaticClass());
+			break;
+		case EPlayerMovementState::Walking:
+			UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraShake(UWalkingCameraShake::StaticClass());
+			break;
+		case EPlayerMovementState::Running:
+			UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraShake(URunningCameraShake::StaticClass());
+			break;
+	}
+
+	
+}
+
+
+
 

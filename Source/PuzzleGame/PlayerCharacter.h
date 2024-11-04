@@ -6,7 +6,6 @@
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
-
 UCLASS()
 class PUZZLEGAME_API APlayerCharacter : public ACharacter
 {
@@ -41,6 +40,20 @@ public:
 	UFUNCTION() void Look(const FInputActionValue& InputValue);
 	UFUNCTION() void StartRunning(const FInputActionValue& InputValue);
 	UFUNCTION() void StopRunning(const FInputActionValue& InputValue);
-	
+
+	UFUNCTION() void UpdateMovementState();
+	UFUNCTION() void UpdateCameraShake();
 
 };
+
+UENUM()
+enum EPlayerMovementState
+{
+	Idle,
+	Walking,
+	Running
+};
+
+inline EPlayerMovementState CurrentMovementState = EPlayerMovementState::Idle;
+
+
