@@ -26,12 +26,16 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+private:
+	
 	UPROPERTY(EditDefaultsOnly) class UCameraComponent* PlayerCamera;
+	UPROPERTY(EditDefaultsOnly) class UInteractComponent* InteractComponent;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input") class UInputMappingContext* MappingContext;
 	UPROPERTY(EditDefaultsOnly, Category = "Input") class UInputAction* MoveAction;
 	UPROPERTY(EditDefaultsOnly, Category = "Input") UInputAction* LookAction;
 	UPROPERTY(EditDefaultsOnly, Category = "Input") UInputAction* RunAction;
+	UPROPERTY(EditDefaultsOnly, Category = "Input") UInputAction* InteractAction;
 
 	UPROPERTY(EditAnywhere, Category = "Movement") float WalkSpeed;
 	UPROPERTY(EditAnywhere, Category = "Movement") float RunSpeed;
@@ -40,10 +44,10 @@ public:
 	UFUNCTION() void Look(const FInputActionValue& InputValue);
 	UFUNCTION() void StartRunning(const FInputActionValue& InputValue);
 	UFUNCTION() void StopRunning(const FInputActionValue& InputValue);
+	UFUNCTION() void Interact(const FInputActionValue& InputValue);
 
 	UFUNCTION() void UpdateMovementState();
 	UFUNCTION() void UpdateCameraShake();
-
 };
 
 UENUM()

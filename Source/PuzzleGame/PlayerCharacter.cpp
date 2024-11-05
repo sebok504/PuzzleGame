@@ -9,6 +9,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "IdleCameraShake.h"
+#include "InteractComponent.h"
 #include "WalkingCameraShake.h"
 #include "RunningCameraShake.h"
 
@@ -22,6 +23,8 @@ APlayerCharacter::APlayerCharacter()
 	PlayerCamera->SetupAttachment(RootComponent);
 
 	PlayerCamera->bUsePawnControlRotation = true;
+
+	InteractComponent = CreateDefaultSubobject<UInteractComponent>("InteractComponent");
 }
 
 // Called when the game starts or when spawned
@@ -59,6 +62,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	Input->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
 	Input->BindAction(RunAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StartRunning);
 	Input->BindAction(RunAction, ETriggerEvent::None, this, &APlayerCharacter::StopRunning);
+	Input->BindAction(InteractAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Interact);
 }
 
 void APlayerCharacter::Move(const FInputActionValue& InputValue)
@@ -85,6 +89,11 @@ void APlayerCharacter::StartRunning(const FInputActionValue& InputValue)
 void APlayerCharacter::StopRunning(const FInputActionValue& InputValue)
 {
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+}
+
+void APlayerCharacter::Interact(const FInputActionValue& InputValue)
+{
+	InteractComponent->Interact(PlayerCamera);
 }
 
 void APlayerCharacter::UpdateMovementState()
